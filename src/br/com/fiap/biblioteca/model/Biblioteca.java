@@ -16,39 +16,46 @@ public class Biblioteca {
 		this.totalLivros = -1;
 	}
 
-	public String adiciona(Livro livro) {
+	public void adiciona(Livro livro) {
 		if (cheia() == true) {
 			System.err.println("Impossivel adicionar livro!");
+		} else {
+			this.totalLivros = this.totalLivros + 1;
+			this.livros[this.totalLivros] = livro;
 		}
-		this.totalLivros = this.totalLivros + 1;
-		this.livros[this.totalLivros] = livro;
 
-		return "Livro adicionado com sucesso!";
 	}
 
 	public Livro consulta(String titulo) {
 		for (Livro x : livros) {
-			if (titulo == x.getTitulo()) {
+			if (x.getTitulo().toLowerCase().contains(titulo.toLowerCase())) {
 				return x;
 			}
 		}
-		return null;
+		return new Livro(titulo, titulo, totalLivros, null);
 	}
 
 	public Livro remove(Livro livro) {
-		if (this.totalLivros < 0) {
-			System.err.println("Não há livros a serem removidos!");
-		}
-		return null;
-	}
-
-	public void atualiza(Livro livro) {
+		int ultimo = this.totalLivros;
 		for (Livro x : this.livros) {
-			if (livro.getTitulo() == x.getTitulo()) {
-				x.remove();
-				adiciona(livro);
+			if (x.getTitulo() == livro.getTitulo()) {
+				for (int i = 0; i < ultimo; i++) {
+					this.livros[i] = this.livros[i + 1];
+				}
+				this.totalLivros = this.totalLivros - 1;
+				return x;
 			}
 		}
+		return livro;
+	}
+
+	//O método atualiza precisaria receber um livro novo pra poder atualizar o antigo
+	public void atualiza(Livro livro) {
+		Livro livroAntigo = livro;
+		this.remove(livroAntigo);
+		
+		Livro livroNovo = null; //<- livro novo que seria atualizado
+		this.adiciona(livroNovo);
 	}
 
 	public int tamanho() {
@@ -62,4 +69,5 @@ public class Biblioteca {
 	public boolean vazia() {
 		return this.totalLivros < 0;
 	}
+
 }
